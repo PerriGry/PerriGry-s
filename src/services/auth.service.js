@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import pool from "@/lib/db";
+import jwt from "jsonwebtoken";
 
 
 //Servicio de Hash, Con el Objetivo de Cifrar al PassWord
@@ -25,9 +26,19 @@ export const SignUp = async(nombre, email, pwd, rol)=>{
 
 //Servicio de Buscar Email
 export const FindEmail = async(email)=>{
-    const [result] = await pool.query(
+    const result = await pool.query(
         'SELECT * FROM f_login($1);',
         [email]
     );
-    return result;
+    return result.rows[0];
+}
+
+//Servicio de Creación del Token 
+//Recomendación: Las llaves deben usar los nombres correspondientes de las columnas de la db
+export const GenerateToken = (user)=>{
+    return jwt.sign({
+        id_user: user.id_usuario, 
+    },
+    process.env.JWT_SECRET,
+    {expiresIn:process.env.JWT_EXPIRES_IN});   
 }
