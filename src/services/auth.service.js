@@ -37,7 +37,8 @@ export const FindEmail = async(email)=>{
 //Recomendación: Las llaves deben usar los nombres correspondientes de las columnas de la db
 export const GenerateToken = (user)=>{
     return jwt.sign({
-        id_user: user.id_usuario, 
+        id_usuario: user.id_usuario, 
+        role: user.rol,
     },
     process.env.JWT_SECRET,
     {expiresIn:process.env.JWT_EXPIRES_IN});   

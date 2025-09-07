@@ -1,10 +1,10 @@
-import {Login} from "@/components/index";
+  import {Login} from "@/components/index";
 
-export default function HomePage() {
-  return (
-    <div>
-      <Login/>  
-    </div>
-  );
-  
-}
+  export default function HomePage() {
+    return (
+      <div>
+        <Login/>  
+      </div>
+    );
+    
+  }
