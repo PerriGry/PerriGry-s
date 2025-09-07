@@ -16,3 +16,12 @@ export const ver_ventas = async() => {
     );
     return result.rows;
 }
+
+//Servicio Registro o Consulta de Clientes
+export const register_client = async(cedula, email)=>{
+    const result = await pool.query(
+        "SELECT * FROM f_registrar_cliente($1,$2);",
+        [cedula, email]
+    );
+    return result.rows[0];
+}
