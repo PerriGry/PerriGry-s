@@ -38,6 +38,7 @@ export const FindEmail = async(email)=>{
 export const GenerateToken = (user)=>{
     return jwt.sign({
         id_usuario: user.id_usuario, 
+        role: user.rol,
     },
     process.env.JWT_SECRET,
     {expiresIn:process.env.JWT_EXPIRES_IN});   
