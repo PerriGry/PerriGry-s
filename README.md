@@ -1,4 +1,4 @@
-﻿# PerriGry-s
+# PerriGry-s
 
 ## 🌱 Flujo de trabajo con ramas
 
