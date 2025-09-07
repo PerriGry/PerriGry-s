@@ -37,8 +37,15 @@ export const FindEmail = async(email)=>{
 //Recomendación: Las llaves deben usar los nombres correspondientes de las columnas de la db
 export const GenerateToken = (user)=>{
     return jwt.sign({
-        id_user: user.id_usuario, 
+        id_usuario: user.id_usuario, 
     },
     process.env.JWT_SECRET,
     {expiresIn:process.env.JWT_EXPIRES_IN});   
+}
+
+//Servicio Verificacion y Decodificacion Token
+export const VerifyToken = (token)=>{
+    try { 
+        return jwt.verify(token, process.env.JWT_SECRET)
+    } catch (error) { return null; }
 }

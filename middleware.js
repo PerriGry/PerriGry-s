@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { VerifyToken } from "@/services/auth.service";
 
 export async function middleware(req) {
     //Obtener Acces_Token
@@ -9,7 +9,7 @@ export async function middleware(req) {
 
     try {
         //Verificar Token
-        jwt.verify(token, process.env.JWT_SECRET);
+        VerifyToken(token)
         //Continuar el Flujo del EndPoint
         return NextResponse.next();
     } catch (err) {
@@ -19,5 +19,5 @@ export async function middleware(req) {
 
 //Rutas donde se aplica el middleware
 export const config = {
-  matcher: ["/api/ruta/colocar"], 
+  matcher: ["/api/work_functions/sale_register"], 
 };
