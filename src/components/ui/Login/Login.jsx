@@ -17,7 +17,7 @@ export default function Login() {
     const password = passRef.current.value;
 
     if (id && password) {
-      router.push("/sapo"); 
+      router.push("/sale_register"); 
     } else {
       alert("Completa todos los campos");
     }
