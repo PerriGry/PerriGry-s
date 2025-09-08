@@ -13,8 +13,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const email = idRef.current.value;
-    const pwd = passRef.current.value;
+    const email = (idRef.current?.value || "").trim()
+    const pwd   = (passRef.current?.value || "").trim();
 
     if (!email || !pwd) {
       alert("Completa todos los campos");
@@ -65,7 +65,7 @@ export default function Login() {
         <h2 className="text-center text-4xl font-bold mb-6 text-black">
           Iniciar sesión
         </h2>
-        <form onSubmit={handleSubmit} className="">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block font-semibold text-black">Email</label>
             <input
@@ -75,14 +75,14 @@ export default function Login() {
             />
           </div>
           <div>
-            <label className="block font-semibold text-black">Contraseña</label>
+            <label className="block font-semibold text-black">Contraseña:</label>
             <input
               type="password"
               ref={passRef}
               className="w-full px-3 py-2 rounded-2xl border border-black bg-white text-black"
             />
           </div>
-          <div className="flex justify-center mt-5">
+          <div className="flex justify-center">
             <button
               type="submit"
               className="w-45 bg-black text-white py-2 rounded-full font-bold cursor-pointer"

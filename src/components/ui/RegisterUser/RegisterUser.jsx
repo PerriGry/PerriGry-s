@@ -10,10 +10,10 @@ export default function RegisterUser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const nombre = nombreRef.current.value;
-    const email = emailRef.current.value;
-    const pwd = pwdRef.current.value;
-    const rol = rolRef.current.value;
+    const nombre = (nombreRef.current.value || "").trim();
+    const email = (emailRef.current.value || "").trim().toLowerCase();
+    const pwd = (pwdRef.current.value || "").trim();
+    const rol = (rolRef.current.value || "").trim();
 
     if (!nombre || !email || !pwd || !rol) {
       alert("Completa todos los campos");
