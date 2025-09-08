@@ -367,7 +367,7 @@ export default function SaleForm() {
                     </div>
                 </div>
 
-                {/* Derecha */}
+                {/* Cuenta */}
                 <div className="lg:col-span-1 border rounded-2xl p-5 shadow-sm bg-gray-600 text-white w-130">
                     <h2 className="text-2xl font-bold mb-4">Cuenta</h2>
                     <p
