@@ -1,10 +1,10 @@
-import { Input } from "@/components/index";
 
-export default function sale_register() {
+import {RegisterSale} from "@/components/index";
+
+export default function Page() {
   return (
     <div>
-      <Input/>
+      <RegisterSale />;
     </div>
   );
-  
 }
