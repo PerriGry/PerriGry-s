@@ -4,9 +4,9 @@ export async function POST(req) {
     try {
         const body = await req.json();
         //Parametros Necesarios
-        const {cedula, email} = body;
+        const {cedula, email, nombre} = body;
         //Servicio de Registrar Cliente
-        const result = await register_client(cedula, email);
+        const result = await register_client(cedula, email, nombre);
         //Respuesta
         return new Response(
             JSON.stringify(result), 
