@@ -8,6 +8,7 @@ import RegisterSale from './ui/RegisterSale/RegisterSale'
 import Recognition from './ui/FaceRecognitionVideo/FaceRecognitionVideo'
 import FaceRegister from './ui/FaceRegister/FaceRegister'
 import FaceCompare from './ui/FaceCompare/FaceCompare' 
+import Header from './ui/Header/Header'
 
 export {
     Login,
@@ -19,5 +20,6 @@ export {
     RegisterSale,
     Recognition,
     FaceRegister,
-    FaceCompare
+    FaceCompare,
+    Header
 }
