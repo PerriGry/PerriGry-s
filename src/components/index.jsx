@@ -5,6 +5,7 @@ import TotalSales from './ui/TotalSales/TotalSales'
 import ExitOption from './ui/ExitOption/ExitOption' 
 import RegisterUser from './ui/RegisterUser/RegisterUser'
 import RegisterSale from './ui/RegisterSale/RegisterSale'
+import Header from './ui/Header/Header'
 
 export {
     Login,
@@ -13,5 +14,6 @@ export {
     TotalSales,
     ExitOption,
     RegisterUser,
-    RegisterSale
+    RegisterSale,
+    Header
 }
