@@ -26,8 +26,6 @@ export default function FaceRecognitionVideo() {
         //Modelo Generador de Vectores del Rostro 
         //Poder Comparar y Reconocer Distintos Rostros
         faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        //Modelo Clasificador de Emociones (Agregado Extra)
-        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
       ]);
 
       video.addEventListener("play", onPlay);
@@ -40,7 +38,6 @@ export default function FaceRecognitionVideo() {
     // Detección continua en video
     async function onPlay() {
       const video = document.getElementById("inputVideo");
-      const canvas = document.getElementById("overlay");
         
       //Obtencion de Datos en Array fullFaceDescriptions
       const fullFaceDescriptions = await faceapi
@@ -49,117 +46,100 @@ export default function FaceRecognitionVideo() {
         //Obtencion de Puntos De Referencia del Rostro
         .withFaceLandmarks()
         //Obtencion de Vector del Rostro 
-        .withFaceDescriptors()
-        //Obtencion de Emociones
-        .withFaceExpressions();
-
-      //Redimension del Canvas
-      //Objetivo -> Que Los Datos de fullFaceDescriptions se Dibujen Correctamente en el canva
-      //matchDimensions -> Adapta el canvas a las dimensiones del Video
-      const dims = faceapi.matchDimensions(canvas, video, true);
-      //Escala las Coordenadas de Deteccion para que Coincidan con el Canvas
-      const resizedResults = faceapi.resizeResults(fullFaceDescriptions, dims);
-
-      //Objetivo -> Limpiar el Canvas Cada Frame
-      //ctx -> Contexto
-      //Obtener los Dibujos Realizados en el Canvas
-      const ctx = canvas.getContext("2d");
-      //Limpiar el canvas Completamente
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      //Dibujar Resultados en el Canvas
-      //Dibuja un recuadro alrededor del Rostro
-      faceapi.draw.drawDetections(canvas, resizedResults);
-      //Dibuja Puntos de Referencia 
-      faceapi.draw.drawFaceLandmarks(canvas, resizedResults);
-      //Muestra una Etiqueta que Representa las Emociones
-      faceapi.draw.drawFaceExpressions(canvas, resizedResults);
+        .withFaceDescriptors();
 
       //Volver a Llamar la Funcion onPlay por Frame
       requestAnimationFrame(onPlay);
     }
   }, []);
 
-  //Captura rostro y guarda como PNG
-  async function captureFace() {
-    const video = document.getElementById("inputVideo");
-    const detections = await faceapi
-      .detectSingleFace(video)
-      .withFaceLandmarks()
-      .withFaceDescriptor();
-
-    if (!detections) {
-      alert("No se detectó ningún rostro");
-      return;
-    }
-
-    const box = detections.detection.box;
-    const regionsToExtract = [
-      new faceapi.Rect(box.x, box.y, box.width, box.height),
-    ];
-    const faceCanvas = await faceapi.extractFaces(video, regionsToExtract);
-
-    if (faceCanvas.length > 0) {
-      const faceImg = faceCanvas[0].toDataURL("image/png");
-
-      // Descargar la imagen
-      const link = document.createElement("a");
-      link.href = faceImg;
-      link.download = "rostro.png";
-      link.click();
-    }
-  }
-
   //Guardar descriptor en localStorage
   async function saveFaceDescriptor() {
     const video = document.getElementById("inputVideo");
+
+    //Obtener Datos en array 'detection'
     const detection = await faceapi
+    //Reconocer un Solo Rostro de Video
       .detectSingleFace(video)
+    //Obtener Puntos de Referencia del Rostro
       .withFaceLandmarks()
+    //Obtener Vector del Rostro
+    //El vector es de 128 numeros, es un tipo Float32Array(128)
       .withFaceDescriptor();
 
+    //Validar si se ha guardado un rostro en 'detection'
     if (!detection) {
       alert("No se detectó rostro");
       return;
     }
-
+    //Extraer los Datos Necesarios, los datos que vienen de: .withFaceDescriptor();
     const descriptor = detection.descriptor;
+    //Convertir los Datos a Formato Array Simple
     const jsonDescriptor = Array.from(descriptor);
 
     console.log(jsonDescriptor)
+    //Guardar en Localstorage
+    //JSON.stringify(jsonDescriptor) -> Convertirlo a Formato JSON
     localStorage.setItem("miRostro", JSON.stringify(jsonDescriptor));
     alert("✅ Descriptor guardado correctamente");
   }
 
-  // 📌 Comparar rostro en vivo con el guardado
+  //Comparar rostro en vivo con el guardado
   async function compareFace() {
     const video = document.getElementById("inputVideo");
+    //Obtener los datos del LocalStorage
     const storedDescriptor = JSON.parse(localStorage.getItem("miRostro"));
-
+    //Validar Si hay Datos en Localstorage
     if (!storedDescriptor) {
       alert("No hay descriptor guardado. Primero guarda uno.");
       return;
     }
-
+    //Objetivo -> Capturar Rostro, para luego ser comparado
+    //Obtener datos en array 'detection'
     const detection = await faceapi
+    //Ubicar un Solo Rostro del Video
       .detectSingleFace(video)
+    //Obtener Puntos de Referencia del Rostro
       .withFaceLandmarks()
+    //Obtener Vectores del Rostro
       .withFaceDescriptor();
-
+    //Validar Si hay datos en 'detection'
     if (!detection) {
       alert("No se detectó rostro para comparar");
       return;
     }
-
+    //Extraer los vectores del Rostro a 'queryDescriptor'
     const queryDescriptor = detection.descriptor;
 
-    const labeledDescriptor = new faceapi.LabeledFaceDescriptors("Usuario1", [
+    //LabeledFaceDescriptors() -> Crear Representacion de un Rostro Existente
+    /*
+    Sintaxis:
+    LabeledFaceDescriptors(
+    'label', -> Nombre del User
+    descriptror -> Vectores en formato Float32Array(128)
+    )
+    */
+   //Debemos hacer conversion del Array De Localstorage a formato Float32Array(128)
+   // Sintaxis -> new Float32Array(storedDescriptor)
+    const labeledDescriptor = new faceapi.LabeledFaceDescriptors("UserStoraged", [
       new Float32Array(storedDescriptor),
     ]);
 
+    /*
+    FaceMatcher() -> Recibir Rostros Conocidos para Luego ser Comparados  
+    Sintaxis:
+    FaceMatcher(
+    [Vectores], -> Un array porque se puede agregar varios Rostros (En nuestro caso solo Uno)
+    0.6 -> Umbral de Reconocimiento (Menor sea el umbral, va a ser mas estricto)
+    )  
+    */
     const faceMatcher = new faceapi.FaceMatcher([labeledDescriptor], 0.35);
+    /*
+    Objetivo:
+        - Comparar Rostro 'queryDescriptor' con el Rostro Almacenado en 'faceMatcher'
+    */
     const bestMatch = faceMatcher.findBestMatch(queryDescriptor);
-
+    //Mostrar Resultado en Formato Texto
     alert("Resultado: " + bestMatch.toString());
   }
 
@@ -167,21 +147,9 @@ export default function FaceRecognitionVideo() {
     <div className="flex flex-col items-center gap-4">
       <div className="relative">
         <video id="inputVideo" autoPlay muted width="640" height="480" />
-        <canvas
-          id="overlay"
-          width="640"
-          height="480"
-          className="absolute top-0 left-0"
-        />
       </div>
 
       <div className="flex gap-3">
-        <button
-          onClick={captureFace}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
-          📸 Capturar rostro
-        </button>
         <button
           onClick={saveFaceDescriptor}
           className="px-4 py-2 bg-green-500 text-white rounded-lg"
