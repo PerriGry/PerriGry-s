@@ -220,7 +220,7 @@ export default function SaleForm() {
         if (!isClientRegistered.current) {
             return showMessage("Registra el cliente primero.", "error");
         }
-        if (orderLinesRef.current.length === 0) {
+        if (orderLinesRef.current.length === 0) {   
             return showMessage("Añade al menos un producto.", "error");
         }
 
