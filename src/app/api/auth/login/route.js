@@ -1,4 +1,4 @@
-import { FindEmail, ComparePsw, GenerateToken } from "@/services/auth.service";
+import { FindEmail, ComparePsw, GenerateInitToken } from "@/services/auth.service";
 import { cookies } from "next/headers";
 
 export async function POST(req) {
@@ -16,11 +16,11 @@ export async function POST(req) {
       return new Response(JSON.stringify({ message: "Contraseña Erronea" }), { status: 401 });
     }
 
-    //Servicio Generar Token
-    const token = GenerateToken(user);
+    //Servicio Generar Token Init
+    const token = GenerateInitToken(user);
 
     //Guarda cookie con el token
-    (await cookies()).set("access_token", token, {
+    (await cookies()).set("init_token", token, {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
