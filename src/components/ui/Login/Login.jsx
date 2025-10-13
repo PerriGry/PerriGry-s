@@ -6,20 +6,44 @@ import Image from "next/image";
 const userIcon = "/userIcon.png";
 
 export default function Login() {
-  const idRef = useRef(null);
-  const passRef = useRef(null);
+  const idRef = useRef(null);    // aquí iría el email
+  const passRef = useRef(null);  // aquí la password
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const id = idRef.current.value;
-    const password = passRef.current.value;
+    const email = (idRef.current?.value || "").trim()
+    const pwd   = (passRef.current?.value || "").trim();
 
-    if (id && password) {
-      router.push("/sale_register"); 
-    } else {
+    if (!email || !pwd) {
       alert("Completa todos los campos");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",    // importante para recibir la cookie
+        body: JSON.stringify({ email, pwd }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Error al iniciar sesión");
+        return;
+      }
+
+      //Redirecciona por rol
+      if (data.role === "Administrador") {
+        router.push("/admin_page");
+      } else {
+        
+        router.push("/sale_register");
+      }
+    } catch (err) {
+      alert("Ocurrió un error. Intenta de nuevo.");
     }
   };
 
@@ -43,7 +67,7 @@ export default function Login() {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block font-semibold text-black">Usuario</label>
+            <label className="block font-semibold text-black">Email</label>
             <input
               type="text"
               ref={idRef}

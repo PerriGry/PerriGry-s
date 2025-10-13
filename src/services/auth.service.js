@@ -37,8 +37,33 @@ export const FindEmail = async(email)=>{
 //Recomendación: Las llaves deben usar los nombres correspondientes de las columnas de la db
 export const GenerateToken = (user)=>{
     return jwt.sign({
-        id_user: user.id_usuario, 
+        id_usuario: user.id_usuario, 
+        role: user.rol,
     },
     process.env.JWT_SECRET,
     {expiresIn:process.env.JWT_EXPIRES_IN});   
+}
+
+//Servicio Verificacion y Decodificacion Token
+export const VerifyToken = (token)=>{
+    try { 
+        return jwt.verify(token, process.env.JWT_SECRET)
+    } catch (error) { return null; }
+}
+
+//Servicio de Creacion Token Init
+//Objetivo -> Creacion de Token temporal que guarde el correo y así, saber su vectores faciales
+export const GenerateInitToken = (user) => {
+    return jwt.sign({
+        email : user.email
+    },
+    process.env.JWT_SECRET_INIT,
+    {expiresIn:process.env.JWT_EXPIRES_INIT});
+}
+
+//Servicio de Verificacion y Decodificacion del Token Init
+export const VerifyInitToken = (token) =>{
+    try {
+        return jwt.verify(token, process.env.JWT_SECRET_INIT)
+    } catch (error) {return null;}
 }
