@@ -12,7 +12,7 @@ export async function POST(req){
         await SignUp(nombre, email, HashedPwd, rol);
         //Respuesta
         return new Response(
-            JSON.stringify({message:"Empleado Registrado Correctamente"}),
+            JSON.stringify({message:"Usuario Registrado Correctamente"}),
             {status:201}
         );
 

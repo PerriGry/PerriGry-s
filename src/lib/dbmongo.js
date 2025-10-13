@@ -1,11 +1,9 @@
 import { MongoClient } from "mongodb";
-
-const uri = process.env.MONGODB_URI; 
+//Declarar Opciones
 const options = {};
-
-
-// Cliente global único
-const client = new MongoClient(uri, options);
+//Crear Conexion
+const client = new MongoClient(process.env.MONGODB_URI, options);
+//Crear Cliente con capacidad de realizar promesas
 const clientPromise = client.connect();
-
+//Exportar Cliente
 export default clientPromise;
