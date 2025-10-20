@@ -1,34 +1,22 @@
-'use client'
+'use client';
 
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation';
+import { Header } from '@/components/index';
 
-import {
-    Header
-} from '@/components/index'
+// Páginas donde no se debe mostrar el header ni el footer
+const hiddenPaths = ['/', '/page.jsx']; // puedes agregar más rutas si es necesario
 
+export default function LayoutClient({ children }) {
+  const pathName = usePathname();
+  const hidden = hiddenPaths.includes(pathName);
 
-// paginas que no quiero mostrar el header y footer
-const hiddenPaths = ['/page.jsx'];
+  return (
+    <div>
+      {!hidden && <Header />}
 
-
-export default function LayoutClient({ childern }) {
-
-    // creamos una constante para manejar el path
-    const pathName = usePathname();
-
-    const hidden = hiddenPaths.includes(pathName);
-
-    return (
-        <div style={{
-            
-        }}>
-
-            {!hidden && <Header />}
-
-            <main>
-                {childern}
-            </main>
-
-        </div>
-    )
+      <main>
+        {children}
+      </main>
+    </div>
+  );
 }
