@@ -8,7 +8,7 @@ import {
 
 
 // paginas que no quiero mostrar el header y footer
-const hiddenPaths = ['/'];
+const hiddenPaths = ['/page.jsx'];
 
 
 export default function LayoutClient({ childern }) {
