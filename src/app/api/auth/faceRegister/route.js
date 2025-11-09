@@ -1,5 +1,5 @@
-import { MongoFaceRegister, FindMongoEmail } from "@/services/mongo.service";
-import { FindEmail } from "@/services/auth.service";
+import { MongoFaceRegister, FindMongoEmail } from "@/services/mongo.service.js";
+import { FindEmail } from "@/services/auth.service.js";
 //Objetivo -> Registrar Los Rostros, Email y Rol en MongoDB
 export async function POST(req) {
     try {
@@ -16,7 +16,7 @@ export async function POST(req) {
             //Validar Rol del Email (Debe Ser coincidente con su contraparte de Postgres)
             if(rol != user.rol) return new Response(JSON.stringify({message:"Rol En Postgres No Coincidente"}),{status:401})
         } catch (error) {
-            return new Response(JSON.stringify({message:"Emailen Postgres No Coincidente"}),{status:401})
+            return new Response(JSON.stringify({message:"Email en Postgres No Coincidente"}),{status:401})
         }
         //Llamado del Servicio de Registrar Rostros
         const result = await MongoFaceRegister(email, rol, descriptor);

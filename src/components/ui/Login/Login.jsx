@@ -133,13 +133,18 @@ export default function Login() {
         alert(data.message || "Error al iniciar sesión");
         return;
       }
-
+      
+      /*
       // Redirección por rol
       if (data.role === "Administrador") {
         router.push("/admin_page");
       } else {
         router.push("/sale_register");
-      }
+      } 
+      */
+
+      router.push('/faceCompare')
+
     } catch (err) {
       alert("Ocurrió un error. Intenta de nuevo.");
     }

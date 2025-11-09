@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export default function FaceCompare(){
@@ -7,6 +8,7 @@ export default function FaceCompare(){
     const faceapiRef = useRef(null);
     const emailRef = useRef(null);
     const descriptorRef = useRef(null);
+    const router = useRouter();
 
     useEffect(() => {
             let rafId;
@@ -60,36 +62,62 @@ export default function FaceCompare(){
     }, []);
 
     async function compareFace(stored) {
-    const faceapi = faceapiRef.current;
-    const video = videoRef.current;
-    if (!faceapi) return alert("Face API no inicializada aún");
-    if (!stored) return alert("No hay descriptor guardado. Primero guarda uno.");
-    const det = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
-    if (!det) return alert("No se detectó rostro para comparar");
-    const labeled = new faceapi.LabeledFaceDescriptors("Coincidencia Exitosa: ", [new Float32Array(stored)]);
-    const matcher = new faceapi.FaceMatcher([labeled], 0.35);
-    alert("Resultado: " + matcher.findBestMatch(det.descriptor).toString());
-  }
+      const faceapi = faceapiRef.current;
+      const video = videoRef.current;
+      if (!faceapi) return alert("Face API no inicializada aún");
+      if (!stored) return alert("No hay descriptor guardado. Primero guarda uno.");
+      const det = await faceapi.detectSingleFace(video).withFaceLandmarks().withFaceDescriptor();
+      if (!det) return alert("No se detectó rostro para comparar");
+      const labeled = new faceapi.LabeledFaceDescriptors("Coincidencia Exitosa: ", [new Float32Array(stored)]);
+      const matcher = new faceapi.FaceMatcher([labeled], 0.35);
+      let distance = matcher.findBestMatch(det.descriptor)
+      alert("Resultado: " + matcher.findBestMatch(det.descriptor).toString());
+      if(distance._distance <= 0.35) return true
+    }
 
    const handleSubmit = async (e) =>{
         e.preventDefault();
         try {
-            const email = (emailRef.current.value || "").trim().toLowerCase();
 
             const res = await fetch("/api/auth/faceReturn", {
                 method:"POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({email}),
             });
-
+            
             const data = await res.json();
+            
+
             if (!res.ok) {
-                alert(data.message || "Error al registrar usuario");
+                alert(data.message || "Error al Iniciar Sesion");
                 return;
             }
 
-            await compareFace(data.descriptor)
+            let match = await compareFace(data.descriptor)
 
+            if(match === true) {
+              try {
+                const res = await fetch("/api/auth/login/loginFace", {
+                  method:'GET'
+                })
+
+                const data = await res.json();
+
+                console.log(data)
+
+                // Redirección por rol
+                if (data.rol === "Administrador") {
+                  router.push("/admin_page");
+                } else {
+                  router.push("/sale_register");
+                } 
+                
+              } catch (error) {
+                alert("Ocurrió un error: " + error.message);
+              }
+            }
+
+            if(match != true) alert("Rostro invalido")
+              
         } catch (error) {
             alert("Ocurrió un error: " + error.message);
         }
@@ -99,12 +127,6 @@ export default function FaceCompare(){
 return (
   <div>
     <form onSubmit={handleSubmit}>
-      <input 
-        type="text" 
-        ref={emailRef} 
-        placeholder="Email" 
-        className="border p-2 rounded mb-2 w-full"
-      />
 
       <video 
         ref={videoRef} 

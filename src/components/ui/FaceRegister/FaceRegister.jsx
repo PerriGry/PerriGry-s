@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 export default function FaceRegister() {
+    const router = useRouter();
   const videoRef = useRef(null);
   const faceapiRef = useRef(null);
   const emailRef = useRef(null);
@@ -71,13 +73,13 @@ export default function FaceRegister() {
   const handleSubmit = async (e) =>{
     e.preventDefault();
     try {
-        const email = (emailRef.current.value || "").trim().toLowerCase();
+        const email = (emailRef.current.value || "").trim();
         const rol = (rolRef.current.value || "").trim();
 
         const res = await fetch("/api/auth/faceRegister", {
             method:"POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, rol, descriptor: descriptorRef.current }),
+            body: JSON.stringify({ email: email, rol: rol, descriptor: descriptorRef.current }),
         });
 
         const data = await res.json();
@@ -87,6 +89,8 @@ export default function FaceRegister() {
         }
 
         alert("Usuario registrado correctamente");
+        router.push('/admin_page')
+        
     } catch (error) {
         alert("Ocurrió un error: " + error.message);
     }

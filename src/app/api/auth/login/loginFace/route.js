@@ -29,7 +29,7 @@ export async function GET() {
     cookieStore.delete("init_token"); 
     //Retornar Respuesta
     return new Response(
-        JSON.stringify({ Message: "Login Exitoso" }),
+        JSON.stringify({ Message: "Login Exitoso", rol: user.rol }),
         { status: 200 }
     );
 

@@ -1,7 +1,9 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 export default function RegisterUser() {
+  const router = useRouter();
   const nombreRef = useRef(null);
   const emailRef = useRef(null);
   const pwdRef = useRef(null);
@@ -39,6 +41,9 @@ export default function RegisterUser() {
       emailRef.current.value = "";
       pwdRef.current.value = "";
       rolRef.current.value = "Empleado";
+
+      router.push('/faceregister')
+
     } catch (err) {
       alert("Ocurrió un error: " + err.message);
     }
