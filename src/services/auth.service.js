@@ -1,6 +1,20 @@
 import bcrypt from "bcryptjs";
 import pool from "@/lib/db";
 import jwt from "jsonwebtoken";
+import clientPromise from "@/lib/dbmongo";
+
+// Obtener todos los usuarios (para eliminar o listar)
+export const getUsers = async () => {
+  const client = await clientPromise;
+  const db = client.db("MorriGry");
+
+  const users = await db
+    .collection("AuthUser")
+    .find({}, { projection: { pwd: 0 } }) // No mostrar contraseñas
+    .toArray();
+
+  return users;
+};
 
 
 //Servicio de Hash, Con el Objetivo de Cifrar al PassWord

@@ -289,12 +289,19 @@ export default function SaleForm() {
     };
 
     return (
-        <div className="min-h-screen bg-yellow-200 text-black p-6 ">
+        <div className="min-h-screen bg-[#95BBF7] text-black p-6 ">
+
+            <button
+                onClick={() => window.location.href = "/"}
+                className="absolute top-4 left-4 bg-white text-black px-3 py-1 rounded-md shadow hover:bg-gray-200 transition text-sm">
+                Volver
+            </button>
+
             <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 ">
                 {/* Izquierda */}
                 <div className="lg:col-span-2 space-y-6 ">
                     {/* Cliente */}
-                    <div className="border rounded-2xl p-5 shadow-sm bg-gray-600 text-white">
+                    <div className="border-0 rounded-2xl p-5 shadow-sm bg-white text-black">
                         <h2 className="text-2xl font-bold mb-4">Cliente</h2>
                         <form onSubmit={onRegistrarCliente} className="space-y-3">
                             <div>
@@ -302,7 +309,7 @@ export default function SaleForm() {
                                 <input
                                     ref={clientIdRef}
                                     type="text"
-                                    className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-black"
+                                    className="w-full px-3 py-2 border-0 rounded-lg  bg-gray-100 text-black"
                                     placeholder="ej. 1012345678"
                                 />
                             </div>
@@ -311,7 +318,7 @@ export default function SaleForm() {
                                 <input
                                     ref={clientNameRef}
                                     type="text"
-                                    className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-black"
+                                    className="w-full px-3 py-2 border-0 rounded-lg bg-gray-100 text-black"
                                     placeholder="ej. Juan Pérez"
                                 />
                             </div>
@@ -320,11 +327,11 @@ export default function SaleForm() {
                                 <input
                                     ref={clientEmailRef}
                                     type="email"
-                                    className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-black"
+                                    className="w-full px-3 py-2 border-0 rounded-lg  bg-gray-100 text-black"
                                     placeholder="cliente@gmail.com"
                                 />
                             </div>
-                            <button className="px-4 py-2 rounded-full bg-yellow-500 hover:bg-yellow-600 font-semibold cursor-pointer transition-colors duration-200 ease-in-out mb-3">
+                            <button className="text-white px-4 py-2 rounded-full bg-[#1E3A5F] hover:bg-[#294A7C] font-semibold cursor-pointer transition-colors duration-200 ease-in-out mb-3">
                                 Ingresar cliente
                             </button>
                         </form>
@@ -332,7 +339,7 @@ export default function SaleForm() {
                     </div>
 
                     {/* Producto */}
-                    <div className="border rounded-2xl p-5 shadow-sm bg-gray-600 text-white">
+                    <div className="border-0 rounded-2xl p-5 shadow-sm bg-white text-black">
                         <h2 className="text-2xl font-bold mb-4">Producto</h2>
                         <form onSubmit={onAddLine} className="space-y-3">
                             <div>
@@ -340,7 +347,7 @@ export default function SaleForm() {
                                 <input
                                     ref={productIdRef}
                                     type="text"
-                                    className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-black"
+                                    className="w-full px-3 py-2 border-0 rounded-lg bg-gray-200 text-black"
                                     placeholder="ej. 10"
                                     disabled
                                 />
@@ -352,13 +359,13 @@ export default function SaleForm() {
                                     type="number"
                                     defaultValue={1}
                                     min={1}
-                                    className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-black"
+                                    className="w-full px-3 py-2 border-0 rounded-lg bg-gray-200 text-black"
                                     disabled
                                 />
                             </div>
                             <button
                                 id="btn-add-line"
-                                className="px-4 py-2 rounded-full bg-yellow-500 hover:bg-yellow-600 font-semibold cursor-pointer transition-colors duration-200 ease-in-out"
+                                className="px-4 py-2 text-white rounded-full bg-[#1E3A5F] hover:bg-[#294A7C] font-semibold cursor-pointer transition-colors duration-200 ease-in-out"
                                 disabled
                             >
                                 Añadir producto a la factura
@@ -368,11 +375,11 @@ export default function SaleForm() {
                 </div>
 
                 {/* Cuenta */}
-                <div className="lg:col-span-1 border rounded-2xl p-5 shadow-sm bg-gray-600 text-white w-130">
+                <div className="lg:col-span-1 border-0 rounded-2xl p-5 shadow-sm bg-white text-black w-130">
                     <h2 className="text-2xl font-bold mb-4">Cuenta</h2>
                     <p
                         ref={summaryRef}
-                        className="whitespace-pre-wrap text-sm bg-gray-50 p-3 rounded-lg min-h-[220px] text-black"
+                        className="whitespace-pre-wrap text-sm bg-gray-200 p-3 rounded-lg min-h-[220px] text-black"
                     >
                         No se agregaron productos.
                     </p>
@@ -384,7 +391,7 @@ export default function SaleForm() {
                         </label>
                         <select
                             ref={paymentSelectRef}
-                            className="w-full px-3 py-2 border rounded-lg bg-gray-100 text-black"
+                            className="w-full px-3 py-2 border-0 rounded-lg bg-gray-100 text-black"
                             defaultValue=""
                         >
                             {/* Opciones de pago */}
@@ -393,7 +400,7 @@ export default function SaleForm() {
 
                     <button
                         onClick={onGenerarFactura}
-                        className="mt-4 w-full py-2 rounded-xl bg-yellow-500 hover:bg-yellow-600 font-semibold cursor-pointer transition-colors duration-200 ease-in-out"
+                        className="mt-4 w-full py-2 text-white rounded-xl bg-[#1E3A5F] hover:bg-[#294A7C] font-semibold cursor-pointer transition-colors duration-200 ease-in-out"
                         type="button"
                     >
                         Generar factura

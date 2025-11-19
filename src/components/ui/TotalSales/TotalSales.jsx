@@ -1,27 +1,55 @@
+"use client";
 
-import { ver_ventas } from "@/services/work_functions.service";
-import { cookies } from "next/headers";
-import { VerifyToken } from "@/services/auth.service";
+import { useEffect, useState } from "react";
 
-export default async function TotalSales() {
-  //Obtener token desde cookies en el servidor
-  const token = (await cookies()).get("access_token")?.value;
-  const user = VerifyToken(token);
+export default function TotalSales() {
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  if (!user) {
-    return <p className="text-red-600">Sesión inválida o expirada</p>;
+  async function fetchTotalSales() {
+    try {
+      const response = await fetch("/api/workfunctions/statictics", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (Array.isArray(data) && data[0]?.ventas_totales) {
+        setTotal(data[0].ventas_totales);
+      }
+    } catch (error) {
+      console.error("Error obteniendo ventas totales:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  //Llamada directa al servicio 
-  const total = await ver_ventas();
+  useEffect(() => {
+    fetchTotalSales();
+  }, []);
 
   return (
-    <div className="bg-gray-600 rounded-3xl shadow-lg p-8 text-center w-140 h-80 flex flex-col items-center justify-center">
-      <h2 className="text-5xl font-bold text-white mb-2">Ventas Totales</h2>
-      <p className="text-3xl font-extrabold text-white mt-4">
-        <span className="text-green-500 mr-1">$</span>
-        {(total[0]?.ventas_totales ?? 0)}
-      </p>
+    <div className="bg-white/60 backdrop-blur-md p-6 rounded-3xl shadow-md">
+      <h2 className="text-2xl text-black font-semibold mb-4">
+        Acumulado total de ventas
+      </h2>
+
+      <div className="bg-white rounded-2xl p-10 text-center">
+        {loading ? (
+          <p className="text-xl font-semibold text-gray-500">Cargando...</p>
+        ) : (
+          <>
+            <p className="text-4xl font-extrabold text-black">
+              ${" "}
+              {Number(total).toLocaleString("es-CO", {
+                minimumFractionDigits: 0,
+              })}
+            </p>
+            <p className="text-2xl font-bold text-black">COP</p>
+          </>
+        )}
+      </div>
     </div>
   );
 }

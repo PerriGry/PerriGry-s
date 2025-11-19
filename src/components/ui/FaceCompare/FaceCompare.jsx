@@ -2,11 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
+import Image from "next/image";
 
 export default function FaceCompare() {
   const videoRef = useRef(null);
   const faceapiRef = useRef(null);
   const router = useRouter();
+
+
 
   // Función para inicializar la cámara y los modelos
   const startCameraAndModels = async () => {
@@ -105,20 +108,30 @@ export default function FaceCompare() {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <video
+        <div className=" relative flex justify-center items-center">
+          <video
           ref={videoRef}
           autoPlay
           muted
           width="640"
           height="480"
-          className="border rounded mb-4"
+          className="border-white border-20 rounded-4xl mb-4  bg-black"
         />
+          <Image
+                src="/camera_icon.png" 
+                alt="Cámara"
+                width={328}
+                height={328}
+                className="opacity-70 absolute"
+              />
+        </div>
+
         <div className="flex gap-3">
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg ml-150"
           >
-            🔍 Comparar rostro
+            Comparar rostro
           </button>
         </div>
       </form>

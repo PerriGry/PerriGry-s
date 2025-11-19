@@ -12,10 +12,10 @@ export default function RegisterUser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const nombre = (nombreRef.current.value || "").trim();
-    const email = (emailRef.current.value || "").trim().toLowerCase();
-    const pwd = (pwdRef.current.value || "").trim();
-    const rol = (rolRef.current.value || "").trim();
+    const nombre = nombreRef.current.value.trim();
+    const email = emailRef.current.value.trim().toLowerCase();
+    const pwd = pwdRef.current.value.trim();
+    const rol = rolRef.current.value.trim();
 
     if (!nombre || !email || !pwd || !rol) {
       alert("Completa todos los campos");
@@ -30,75 +30,81 @@ export default function RegisterUser() {
       });
 
       const data = await res.json();
+
       if (!res.ok) {
-        alert(data.message || "Error al registrar usuario");
+        alert(data.error || "Error al registrar usuario");
         return;
       }
 
       alert("Usuario registrado correctamente");
-      //Limpieza del form después de registrar
+
+      // limpiar inputs
       nombreRef.current.value = "";
       emailRef.current.value = "";
       pwdRef.current.value = "";
       rolRef.current.value = "Empleado";
 
-      router.push('/faceregister')
-
+      router.push("/faceregister");
     } catch (err) {
       alert("Ocurrió un error: " + err.message);
     }
   };
 
   return (
-    <div className="w-full max-w-md bg-gray-600 rounded-3xl shadow-lg p-8">
-      <h2 className="text-2xl font-bold mb-6 text-white flex justify-center">
-        Registrar Usuario
+    <div className="w-full max-w-xl bg-white rounded-3xl shadow-xl p-10 border border-gray-200">
+      <h2 className="text-3xl font-bold text-center mb-8 text-black">
+        Agregar Usuario
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-5">
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+
         <div>
-          <label className="block text-sm text-white font-bold">Nombre</label>
+          <label className="block font-semibold text-gray-700 mb-1">Nombre:</label>
           <input
             type="text"
             ref={nombreRef}
-            className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2"
+            className="w-full rounded-xl px-4 py-3 bg-gray-100 border text-black border-gray-300 focus:outline-none"
+            placeholder="Nombre"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-white font-bold">Email</label>
+          <label className="block font-semibold text-gray-700 mb-1">Email:</label>
           <input
             type="email"
             ref={emailRef}
-            className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2"
+            className="w-full rounded-xl px-4 py-3 bg-gray-100 border text-black border-gray-300 focus:outline-none"
+            placeholder="Email"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-white font-bold">Contraseña</label>
+          <label className="block font-semibold text-gray-700 mb-1">Contraseña:</label>
           <input
             type="password"
             ref={pwdRef}
-            className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2"
+            className="w-full rounded-xl px-4 py-3 bg-gray-100 border text-black border-gray-300 focus:outline-none"
+            placeholder="Contraseña"
           />
         </div>
 
         <div>
-          <label className="block text-sm text-white font-bold">Rol</label>
+          <label className="block font-semibold text-gray-700 mb-1">Rol:</label>
           <select
             ref={rolRef}
             defaultValue="Empleado"
-            className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 appearance-none"
+            className="w-full rounded-xl px-4 py-3 bg-gray-100 border text-black border-gray-300 focus:outline-none"
           >
-            <option value="Empleado" className="bg-gray-600">Empleado</option>
-            <option value="Administrador" className="bg-gray-600">Administrador</option>
+            <option value="Empleado">Empleado</option>
+            <option value="Administrador">Administrador</option>
           </select>
         </div>
 
         <button
           type="submit"
-          className="w-full py-2 px-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl cursor-pointer transition-colors duration-200 ease-in-out"
+          className="w-full py-3 bg-[#123C83] text-white font-semibold rounded-xl hover:bg-[#0F2F6A] transition"
         >
-          Registrar
+          Agregar
         </button>
       </form>
     </div>
