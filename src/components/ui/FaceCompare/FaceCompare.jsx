@@ -53,12 +53,12 @@ export default function FaceCompare() {
     if (!det) return alert("No se detectó rostro para comparar");
 
     const labeled = new faceapi.LabeledFaceDescriptors("Coincidencia Exitosa", [new Float32Array(stored)]);
-    const matcher = new faceapi.FaceMatcher([labeled], 0.35);
+    const matcher = new faceapi.FaceMatcher([labeled], 0.45);
     const distance = matcher.findBestMatch(det.descriptor);
 
     alert("Resultado: " + distance.toString());
 
-    return distance._distance <= 0.35;
+    return distance._distance <= 0.45;
   };
 
   const handleSubmit = async (e) => {

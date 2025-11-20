@@ -94,26 +94,73 @@ export default function FaceRegister() {
     }
   };
 
-  return (
-    <div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-        <input type="text" ref={emailRef} placeholder="Email" className="border rounded p-2" />
-        <input type="text" ref={rolRef} placeholder="Rol" className="border rounded p-2" />
+ return (
+  <div className="min-h-screen flex items-center justify-center">
 
-        <video ref={videoRef} autoPlay muted width="640" height="480" className="border rounded mb-2" />
+    <div className="w-full max-w-xl bg-white rounded-3xl shadow-xl p-10 border border-gray-200">
 
+      <h2 className="text-3xl font-bold text-center mb-8 text-black">
+        Registrar Usuario con Rostro
+      </h2>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+
+        {/* EMAIL */}
+        <div>
+          <label className="block font-semibold text-gray-700 mb-1">Email:</label>
+          <input
+            type="text"
+            ref={emailRef}
+            placeholder="Email"
+            className="w-full rounded-xl px-4 py-3 bg-gray-100 border text-black border-gray-300 focus:outline-none"
+          />
+        </div>
+
+        {/* ROL */}
+        <div>
+          <label className="block font-semibold text-gray-700 mb-1">Rol:</label>
+          <input
+            type="text"
+            ref={rolRef}
+            placeholder="Rol"
+            className="w-full rounded-xl px-4 py-3 bg-gray-100 border text-black border-gray-300 focus:outline-none"
+          />
+        </div>
+
+        {/* VIDEO */}
+        <div>
+          <label className="block font-semibold text-gray-700 mb-2">Cámara:</label>
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            width="640"
+            height="480"
+            className="w-full rounded-xl bg-black border border-gray-300 shadow"
+          />
+        </div>
+
+        {/* BOTÓN CAPTURAR */}
         <button
           type="button"
           onClick={saveFaceDescriptor}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg"
+          className="w-full py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition"
         >
-          💾 Capturar descriptor
+          Capturar descriptor
         </button>
 
-        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-lg">
-          📤 Registrar Usuario
+        {/* BOTÓN REGISTRAR */}
+        <button
+          type="submit"
+          className="w-full py-3 bg-[#123C83] text-white font-semibold rounded-xl hover:bg-[#0F2F6A] transition"
+        >
+          Registrar Usuario
         </button>
       </form>
     </div>
-  );
+
+  </div>
+);
+
+
 }

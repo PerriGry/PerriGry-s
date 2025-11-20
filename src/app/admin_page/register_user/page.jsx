@@ -8,7 +8,7 @@ import { Header } from "@/components/index";
 export default function RegisterUserPage() {
   return (
 
-    <div className="min-h-screen w-full bg-[#95BBF7] flex flex-col md:flex-row p-10 relative">
+    <div className="mt-10 min-h-screen w-full bg-[#95BBF7] flex flex-col md:flex-row p-10 relative">
       <Header/>
 
       {/* BOTÓN VOLVER */}

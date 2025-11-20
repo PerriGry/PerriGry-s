@@ -12,7 +12,7 @@ export default function DeleteUser() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("/api/auth/users");
+        const res = await fetch("/api/auth/getUsers");
         const data = await res.json();
 
         if (res.ok) {
@@ -65,7 +65,7 @@ export default function DeleteUser() {
       {/* LISTA DE USUARIOS */}
       <div className="space-y-4 max-h-[350px] overflow-auto pr-2">
         {users.length === 0 ? (
-          <p className="text-center text-gray-500">No hay usuarios registrados</p>
+          <p className="text-center text-black">No hay usuarios registrados</p>
         ) : (
           users.map((user, i) => (
             <div
@@ -78,22 +78,13 @@ export default function DeleteUser() {
               onClick={() => setSelected(user)}
             >
               <div className="flex items-center gap-4">
-                {/* Avatar genérico */}
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-400">
-                  <img
-                    src={user.image || "/icons/user.png"}
-                    className="w-full h-full object-cover"
-                    alt="avatar"
-                  />
-                </div>
-
                 <div>
-                  <p className="font-bold">Nombre: {user.nombre}</p>
-                  <p>Email: {user.email}</p>
+                  <p className="font-bold text-black">Nombre: {user.nombre}</p>
+                  <p className="text-black">Email: {user.email}</p>
                 </div>
               </div>
 
-              <p className="text-sm font-semibold">Rol: {user.rol}</p>
+              <p className="text-sm font-semibold text-black">Rol: {user.rol}</p>
             </div>
           ))
         )}

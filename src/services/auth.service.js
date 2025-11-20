@@ -47,6 +47,40 @@ export const FindEmail = async(email)=>{
     return result.rows[0];
 }
 
+//Servicio de Actualizacion de Clientes
+export const updateEmployee = async(email, name, rol) => {
+    const result = await pool.query(
+        `
+        UPDATE USUARIOS
+        SET NOMBRE = ($1),
+        ROL = ($2)
+        WHERE EMAIL = ($3);
+        `, 
+        [name, rol, email]
+    );
+    return result.rows[0];
+}
+
+//Servicio de Eliminacion de USUARIOS
+export const deleteEmployee = async(email) => {
+    const result = await pool.query(
+        `
+        DELETE FROM USUARIOS
+        WHERE EMAIL = ($1);
+        `,
+        [email]
+    );
+    return result.rows[0];
+}
+
+//Servicio de OBTENCION de USUARIOS
+export const getEmployee = async() => {
+    const result = await pool.query(
+        "SELECT * FROM USUARIOS;"
+    );
+    return result.rows;
+}
+
 //Servicio de Creación del Token 
 //Recomendación: Las llaves deben usar los nombres correspondientes de las columnas de la db
 export const GenerateToken = (user)=>{

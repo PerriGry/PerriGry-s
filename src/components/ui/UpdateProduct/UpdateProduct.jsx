@@ -2,28 +2,80 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function UpdateProduct() {
-
   const pathname = usePathname();
 
-  // Estado del producto seleccionado
+  // Lista de productos desde el backend
+  const [products, setProducts] = useState([]);
+
+  // Producto seleccionado
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Mock temporal del listado
-  const products = [
-    { id: 1, name: "Croquetas Premium", price: 50000, stock: 20 },
-    { id: 2, name: "Hueso de Juguete", price: 15000, stock: 50 },
-    { id: 3, name: "Cama XL", price: 120000, stock: 5 },
-  ];
+  // Estado de carga
+  const [loading, setLoading] = useState(false);
 
+  // -----------------------------------------
+  //          GET: OBTENER PRODUCTOS
+  // -----------------------------------------
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/products", { method: "GET" });
+      const data = await res.json();
+
+      if (!res.ok) return alert(data.error);
+
+      setProducts(data);
+    } catch (err) {
+      alert("Error al obtener productos: " + err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  // -----------------------------------------
+  //          PUT: ACTUALIZAR PRODUCTO
+  // -----------------------------------------
+  const handleUpdate = async () => {
+    if (!selectedProduct) return;
+
+    const { id_producto, nombre, valor_unidad, stock } = selectedProduct;
+
+    setLoading(true);
+
+    const res = await fetch("/api/products/update", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: id_producto,
+        nombre,
+        valor: Number(valor_unidad),
+        cantidad: Number(stock),
+      }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+
+    if (!res.ok) return alert(data.error);
+
+    alert("Producto actualizado correctamente");
+
+    // Recargar listado
+    fetchProducts();
+  };
+
+  // -----------------------------------------
+  //          TEMPLATE PRINCIPAL
+  // -----------------------------------------
   return (
     <div className="bg-white w-[900px] min-h-[550px] rounded-3xl shadow-xl p-10 text-black flex gap-10">
 
       {/* ------------------- Panel Izquierdo ------------------- */}
       <div className="w-[300px] bg-white shadow rounded-2xl p-4 h-fit">
-
         <div className="font-semibold text-gray-700 mb-3">Selecciona</div>
 
         <div className="space-y-2">
@@ -70,40 +122,28 @@ export default function UpdateProduct() {
 
         <h1 className="text-3xl font-bold mb-6">Actualizar Productos</h1>
 
-        {/* Buscador */}
-        <div className="flex items-center mb-6">
-          <div className="flex items-center bg-[#E6E6E6] rounded-full px-4 py-2 w-[350px]">
-            <input
-              type="text"
-              placeholder="Buscar producto..."
-              className="bg-transparent outline-none flex-1"
-            />
-          </div>
-          <button className="ml-[-40px]">
-            <Image src="/icons/search.png" width={25} height={25} alt="buscar" />
-          </button>
-        </div>
-
-        {/* Grid de productos: clic para seleccionar uno */}
+        {/* Grid de productos */}
         <div className="grid grid-cols-3 gap-4 mb-8">
           {products.map((p) => (
             <div
-              key={p.id}
+              key={p.id_producto}
               onClick={() => setSelectedProduct(p)}
               className={`p-4 rounded-xl cursor-pointer ${
-                selectedProduct?.id === p.id
+                selectedProduct?.id_producto === p.id_producto
                   ? "bg-[#B0D9FF]"
                   : "bg-[#E6E6E6]"
               }`}
             >
-              <p className="font-semibold">{p.name}</p>
+              <p className="font-semibold">{p.nombre.trim()}</p>
               <p className="text-sm text-gray-600">Stock: {p.stock}</p>
-              <p className="text-sm text-gray-600">Precio: ${p.price}</p>
+              <p className="text-sm text-gray-600">
+                Precio: ${Number(p.valor_unidad).toLocaleString()}
+              </p>
             </div>
           ))}
         </div>
 
-        {/* ------------------- FORMULARIO DE EDICIÓN ------------------- */}
+        {/* ------------------- FORMULARIO ------------------- */}
         {selectedProduct && (
           <div className="space-y-4 p-4 bg-gray-100 rounded-xl">
 
@@ -114,7 +154,13 @@ export default function UpdateProduct() {
               <label className="font-medium">Nombre</label>
               <input
                 type="text"
-                defaultValue={selectedProduct.name}
+                value={selectedProduct.nombre}
+                onChange={(e) =>
+                  setSelectedProduct({
+                    ...selectedProduct,
+                    nombre: e.target.value,
+                  })
+                }
                 className="w-full p-2 bg-white rounded-lg border mt-1"
               />
             </div>
@@ -124,7 +170,13 @@ export default function UpdateProduct() {
               <label className="font-medium">Precio</label>
               <input
                 type="number"
-                defaultValue={selectedProduct.price}
+                value={selectedProduct.valor_unidad}
+                onChange={(e) =>
+                  setSelectedProduct({
+                    ...selectedProduct,
+                    valor_unidad: e.target.value,
+                  })
+                }
                 className="w-full p-2 bg-white rounded-lg border mt-1"
               />
             </div>
@@ -134,20 +186,25 @@ export default function UpdateProduct() {
               <label className="font-medium">Stock</label>
               <input
                 type="number"
-                defaultValue={selectedProduct.stock}
+                value={selectedProduct.stock}
+                onChange={(e) =>
+                  setSelectedProduct({
+                    ...selectedProduct,
+                    stock: e.target.value,
+                  })
+                }
                 className="w-full p-2 bg-white rounded-lg border mt-1"
               />
             </div>
 
-            {/* Imagen */}
-            <div>
-              <label className="font-medium">Imagen</label>
-              <input type="file" className="w-full p-2 bg-white rounded-lg border mt-1" />
-            </div>
 
             {/* Botón */}
-            <button className="bg-[#0077B6] text-white px-10 py-3 rounded-xl text-lg font-semibold">
-              Guardar Cambios
+            <button
+              onClick={handleUpdate}
+              disabled={loading}
+              className="bg-[#0077B6] text-white px-10 py-3 rounded-xl text-lg font-semibold"
+            >
+              {loading ? "Guardando..." : "Guardar Cambios"}
             </button>
           </div>
         )}
@@ -156,4 +213,3 @@ export default function UpdateProduct() {
     </div>
   );
 }
-

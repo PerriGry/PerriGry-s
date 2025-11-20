@@ -25,3 +25,11 @@ export const register_client = async(cedula, email, nombre)=>{
     );
     return result.rows[0];
 }
+
+//Servicio de Obtencion de Productos Más Vendidos
+export const top_products = async() => {
+    const result = await pool.query(
+        "SELECT * FROM get_top_ventas;"
+    );
+    return result.rows
+}

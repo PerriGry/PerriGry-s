@@ -11,7 +11,7 @@ export default function UpdateUser() {
     e.preventDefault();
 
     const email = emailRef.current.value.trim().toLowerCase();
-    const nombre = nameRef.current.value.trim();
+    const name = nameRef.current.value.trim();   // <--- nombre ahora es "name"
     const rol = roleRef.current.value.trim();
 
     if (!email) return alert("Ingresa el email del usuario a actualizar");
@@ -20,7 +20,7 @@ export default function UpdateUser() {
       const res = await fetch("/api/auth/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, nombre, rol }),
+        body: JSON.stringify({ email, name, rol }), // <--- parámetros corregidos
       });
 
       const data = await res.json();

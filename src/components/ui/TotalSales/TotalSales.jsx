@@ -8,7 +8,7 @@ export default function TotalSales() {
 
   async function fetchTotalSales() {
     try {
-      const response = await fetch("/api/workfunctions/statictics", {
+      const response = await fetch("/api/work_functions/statistics", {
         method: "GET",
         credentials: "include",
       });

@@ -2,39 +2,108 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function DeleteProduct() {
-
   const pathname = usePathname();
 
-  // Productos simulados                    ↓↓↓ AQUI LUEGO IRÁ TU API REAL
-  const sampleProducts = [
-    { id: 1, name: "Croquetas Premium", stock: 20, price: 50000 },
-    { id: 2, name: "Hueso de Juguete", stock: 50, price: 15000 },
-    { id: 3, name: "Cama Suave XL", stock: 5, price: 120000 },
-    { id: 4, name: "Collar Antipulgas", stock: 80, price: 30000 },
-    { id: 5, name: "Arena para gato 10kg", stock: 15, price: 45000 },
-  ];
-
+  // ESTADOS
+  const [products, setProducts] = useState([]);
+  const [filtered, setFiltered] = useState([]);
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const filtered = sampleProducts.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // -------------------- GET PRODUCTOS --------------------
+  const getProducts = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/products", {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.error);
+        setLoading(false);
+        return;
+      }
+
+      // Mapear productos a un formato usable en frontend
+      const mapped = data.map((p) => ({
+        id: p.id_producto,
+        name: p.nombre.trim(),
+        price: parseFloat(p.valor_unidad),
+        stock: p.stock,
+      }));
+
+      setProducts(mapped);
+      setFiltered(mapped);
+
+      setLoading(false);
+    } catch (err) {
+      console.error("Error GET productos:", err);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  // -------------------- FILTRO --------------------
+  useEffect(() => {
+    setFiltered(
+      products.filter((p) =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+      )
+    );
+  }, [search, products]);
+
+  // -------------------- DELETE PRODUCT --------------------
+  const deleteAction = async () => {
+    if (!selected) return;
+
+    const ok = confirm(
+      `¿Seguro que deseas eliminar el producto "${selected.name}"?`
+    );
+    if (!ok) return;
+
+    try {
+      const res = await fetch("/api/products/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: selected.id }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Error al eliminar producto");
+        return;
+      }
+
+      alert("Producto eliminado correctamente");
+
+      setSelected(null);
+      getProducts(); // recargar lista
+    } catch (err) {
+      console.error("Error DELETE:", err);
+      alert("Error al conectar con el servidor.");
+    }
+  };
 
   return (
     <div className="flex gap-10 text-black">
 
       {/* -------------------- PANEL IZQUIERDO -------------------- */}
       <div className="w-[300px] bg-white shadow rounded-2xl p-4 h-fit">
-
         <div className="font-semibold text-gray-700 mb-3">Selecciona</div>
 
         <div className="space-y-2">
-
-          {/* Actualizar productos */}
           <Link href="/admin_page/update_product">
             <button
               className={`w-full p-4 text-left border-b ${
@@ -47,7 +116,6 @@ export default function DeleteProduct() {
             </button>
           </Link>
 
-          {/* Agregar productos */}
           <Link href="/admin_page/add_stock">
             <button
               className={`w-full p-4 text-left border-b ${
@@ -60,7 +128,6 @@ export default function DeleteProduct() {
             </button>
           </Link>
 
-          {/* Eliminar productos */}
           <Link href="/admin_page/delete_product">
             <button
               className={`w-full p-4 text-left ${
@@ -97,9 +164,11 @@ export default function DeleteProduct() {
           </button>
         </div>
 
-        {/* -------------------- GRID DE PRODUCTOS -------------------- */}
+        {/* -------------------- GRID -------------------- */}
         <div className="grid grid-cols-4 gap-6 mb-8">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <p className="text-gray-500">Cargando productos...</p>
+          ) : filtered.length === 0 ? (
             <p className="text-gray-500">No se encontraron productos.</p>
           ) : (
             filtered.map((prod) => (
@@ -107,11 +176,12 @@ export default function DeleteProduct() {
                 key={prod.id}
                 onClick={() => setSelected(prod)}
                 className={`rounded-xl p-4 cursor-pointer text-sm shadow 
-                ${
-                  selected?.id === prod.id
-                    ? "bg-[#B0D9FF]"
-                    : "bg-[#E6E6E6]"
-                }`}
+                  ${
+                    selected?.id === prod.id
+                      ? "bg-[#B0D9FF]"
+                      : "bg-[#E6E6E6]"
+                  }
+                `}
               >
                 <p className="font-semibold">{prod.name}</p>
                 <p className="text-gray-700">Stock: {prod.stock}</p>
@@ -121,7 +191,7 @@ export default function DeleteProduct() {
           )}
         </div>
 
-        {/* -------------------- DETALLE DEL PRODUCTO -------------------- */}
+        {/* -------------------- DETALLE -------------------- */}
         {selected && (
           <div className="bg-gray-100 p-6 rounded-xl mb-6 space-y-3">
             <h2 className="text-xl font-semibold">Producto seleccionado:</h2>
@@ -160,6 +230,7 @@ export default function DeleteProduct() {
 
         {/* -------------------- BOTÓN ELIMINAR -------------------- */}
         <button
+          onClick={deleteAction}
           disabled={!selected}
           className={`px-10 py-3 text-white text-lg font-semibold rounded-xl 
             ${selected ? "bg-[#C62828]" : "bg-gray-400 cursor-not-allowed"}
@@ -172,4 +243,3 @@ export default function DeleteProduct() {
     </div>
   );
 }
-
